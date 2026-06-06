@@ -1,6 +1,8 @@
 #ifndef JNISTUFF
 #define JNISTUFF
 
+#include "../../Includes/obfuscate.h"
+
 static char s[150];
 JavaVM *jvm;
 JNIEnv* getEnv() {
@@ -224,25 +226,5 @@ void writeClipboard(const std::string& text) {
     env->DeleteLocalRef(clipboardService);
     jvm->DetachCurrentThread();
 }
-
-/*void saveKey(const char* key) {
-    nlohmann::json configJson;
-    configJson["Key"] = key;
-
-    std::ofstream file("/storage/emulated/0/Android/data/lqmhax.online/files/bao.ini");
-    if (!file.is_open()) {
-        std::cerr << "Error: Unable to open bao.ini for writing\n";
-        return;
-    }
-
-    file << std::setw(4) << configJson << std::endl;
-    file.close();
-    
-    if (configJson.contains("Key")) {
-        std::string key = configJson["Key"];
-        strncpy(s, key.c_str(), sizeof(s));
-    }
-}
-*/
 
 #endif JNISTUFF
