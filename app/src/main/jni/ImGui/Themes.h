@@ -2,6 +2,10 @@
 #include "imgui.h"
 #include "gradient.h"
 
+/*
+ * Setup your theme here
+ */
+
 void DrawImGuiStyle(){
     ImGuiStyle& style = ImGui::GetStyle();
 
@@ -12,7 +16,6 @@ void DrawImGuiStyle(){
     style.FrameBorderSize = 0.6f;
     style.ChildRounding = 8.0f;
 
-    // Modern Dark Theme với accent color cyan/teal
     style.Colors[ImGuiCol_Text] = ImVec4(0.95f, 0.96f, 0.98f, 1.0f);
     style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.0f);
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0.10f, 0.10f, 0.13f, 1.0f);
