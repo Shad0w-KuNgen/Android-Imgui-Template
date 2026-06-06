@@ -25,8 +25,6 @@
 #include "Global.h"
 #include "Logo.h"
 #include "Login.h"
-#include "ImGui/Font_FA7_Solid.h"
-#include "ImGui/Icon_FA7.h"
 
 #define TARGET_LIB oxorany("libil2cpp.so")
 

@@ -12,6 +12,8 @@
 #include "Iconcpp.h"
 #include "Touch.h"
 #include "Image/ImageTexture.h"
+#include "ImGui/Font_FA7_Solid.h"
+#include "ImGui/Icon_FA7.h"
 
 bool CircularButton(const char* label_text, float button_size = 64.0f, ImU32 button_color = IM_COL32(255, 255, 255, 255), ImVec4 TextColor = ImVec4(1.00f, 1.00f, 1.00f, 1.00f)) {
     ImGuiStyle &style = ImGui::GetStyle();
