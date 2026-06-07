@@ -744,43 +744,43 @@ void* Init_Thread(void*) {
  * https://github.com/traitimtrongvag/Android-Imgui-Template/tree/Test-UI
  */
 
- /////////////////////////////////////////////////////////////////////////////
- // nativeOnTouch - JNI bridge for motion events from Java                 //
- // Forwards ACTION_DOWN / ACTION_UP / ACTION_MOVE to ImGui's IO.         //
- // Returns JNI_TRUE if ImGui wants to consume the event.                 //
- /////////////////////////////////////////////////////////////////////////////
- extern "C" {
-
- JNIEXPORT jboolean JNICALL
- Java_com_unity3d_player_UnityPlayerActivity_nativeOnTouch(
-   JNIEnv* env, jclass clazz, jobject motionEvent)
- {
-   if (!setup || motionEvent == nullptr) return JNI_FALSE;
-
-   jclass    motionEventClass = env->GetObjectClass(motionEvent);
-   if (!motionEventClass) return JNI_FALSE;
-
-   jmethodID getX            = env->GetMethodID(motionEventClass, "getX",            "()F");
-   jmethodID getY            = env->GetMethodID(motionEventClass, "getY",            "()F");
-   jmethodID getAction       = env->GetMethodID(motionEventClass, "getAction",       "()I");
-   jmethodID getPointerCount = env->GetMethodID(motionEventClass, "getPointerCount", "()I");
-   if (!getX || !getY || !getAction) return JNI_FALSE;
-
-   float x      = env->CallFloatMethod(motionEvent, getX);
-   float y      = env->CallFloatMethod(motionEvent, getY);
-   int   action = env->CallIntMethod(motionEvent, getAction);
-
-   ImGuiIO& io = ImGui::GetIO();
-   io.AddMousePosEvent(x, y);
-
-   if      (action == 0) io.AddMouseButtonEvent(0, true);   /* ACTION_DOWN */
-   else if (action == 1) io.AddMouseButtonEvent(0, false);  /* ACTION_UP   */
-   /* ACTION_MOVE (2) - position already updated above */
-
-   return io.WantCaptureMouse ? JNI_TRUE : JNI_FALSE;
- }
-
- } /* extern "C" */
+ // /////////////////////////////////////////////////////////////////////////////
+ // // nativeOnTouch - JNI bridge for motion events from Java                 //
+ // // Forwards ACTION_DOWN / ACTION_UP / ACTION_MOVE to ImGui's IO.         //
+ // // Returns JNI_TRUE if ImGui wants to consume the event.                 //
+ // /////////////////////////////////////////////////////////////////////////////
+ // extern "C" {
+ //
+ // JNIEXPORT jboolean JNICALL
+ // Java_com_unity3d_player_UnityPlayerActivity_nativeOnTouch(
+ //   JNIEnv* env, jclass clazz, jobject motionEvent)
+ // {
+ //   if (!setup || motionEvent == nullptr) return JNI_FALSE;
+ //
+ //   jclass    motionEventClass = env->GetObjectClass(motionEvent);
+ //   if (!motionEventClass) return JNI_FALSE;
+ //
+ //   jmethodID getX            = env->GetMethodID(motionEventClass, "getX",            "()F");
+ //   jmethodID getY            = env->GetMethodID(motionEventClass, "getY",            "()F");
+ //   jmethodID getAction       = env->GetMethodID(motionEventClass, "getAction",       "()I");
+ //   jmethodID getPointerCount = env->GetMethodID(motionEventClass, "getPointerCount", "()I");
+ //   if (!getX || !getY || !getAction) return JNI_FALSE;
+ //
+ //   float x      = env->CallFloatMethod(motionEvent, getX);
+ //   float y      = env->CallFloatMethod(motionEvent, getY);
+ //   int   action = env->CallIntMethod(motionEvent, getAction);
+ //
+ //   ImGuiIO& io = ImGui::GetIO();
+ //   io.AddMousePosEvent(x, y);
+ //
+ //   if      (action == 0) io.AddMouseButtonEvent(0, true);   /* ACTION_DOWN */
+ //   else if (action == 1) io.AddMouseButtonEvent(0, false);  /* ACTION_UP   */
+ //   /* ACTION_MOVE (2) - position already updated above */
+ //
+ //   return io.WantCaptureMouse ? JNI_TRUE : JNI_FALSE;
+ // }
+ //
+ // } /* extern "C" */
 
 
 /////////////////////////////////////////////////////////////////////////////
