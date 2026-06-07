@@ -10,17 +10,11 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
-#include <mutex>
 #include <thread>
-#include <atomic>
-
-#include <nlohmann/json.hpp>
-#include <httplib.h>
 
 #include "AnAn/Call_Me.h"
 #include "Headers.h"
 
-#include "Remap.h"
 #include "SaveLoadMenu.h"
 #include "Global.h"
 #include "Logo.h"
@@ -31,24 +25,12 @@
 /////////////////////////////////////////////////////////////////////////////
 // Login / session state (file-scope)                                      //
 /////////////////////////////////////////////////////////////////////////////
-static bool  keyLoaded            = false;
 static bool  isLogin              = true;
 static bool  showLoginSuccess     = false;
-static float loginSuccessTimer    = 0.0f;
 static float progress             = 1.0f;
 static auto  startTime            = std::chrono::steady_clock::now();
 
-static bool  initialized          = false;
-static bool  popupOpened          = false;
-static bool  attemptedAutoLogin   = false;
-
-/////////////////////////////////////////////////////////////////////////////
-// Volume-key shortcut state                                               //
-/////////////////////////////////////////////////////////////////////////////
-static int   g_lastVolume         = -1;
-static bool  g_volumeCheckerInit  = false;
-
-void ShowLoginSuccess() {
+static bool  attemptedAutoLogin   = false; {
     ImGui::Begin(OBFUSCATE("Login Success"), nullptr,
         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 
@@ -58,7 +40,12 @@ void ShowLoginSuccess() {
     std::chrono::duration<float> elapsedTime = currentTime - startTime;
     const float countdownTime = 7.0f;
     progress = 1.0f - (elapsedTime.count() / countdownTime);
-    if (progress < 0.0f) progress = 0.0f;
+    if (progress <= 0.0f) {
+        progress         = 0.0f;
+        showLoginSuccess = false;
+        ImGui::End();
+        return;
+    }
 
     ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0, 1, 0, 1));
     ImGui::ProgressBar(progress, ImVec2(200, 5));
@@ -143,7 +130,9 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
     /////////////////////////////////////////////////////////////////////////
     // Volume-key shortcut - poll every 200 ms                            //
     /////////////////////////////////////////////////////////////////////////
-    static float volumeCheckTimer = 0.0f;
+    static float volumeCheckTimer   = 0.0f;
+    static int   g_lastVolume       = -1;
+    static bool  g_volumeCheckerInit = false;
     volumeCheckTimer += io.DeltaTime;
     if (volumeCheckTimer >= 0.2f) {
         volumeCheckTimer = 0.0f;
@@ -190,6 +179,8 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
         sessionInitialized = true;
     }
 
+    if (showLoginSuccess) ShowLoginSuccess();
+
     /////////////////////////////////////////////////////////////////////////
     // Login flow                                                          //
     /////////////////////////////////////////////////////////////////////////
@@ -202,7 +193,6 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
         if (!attemptedAutoLogin) {
             attemptedAutoLogin = true;
             ImGui::OpenPopup(OBFUSCATE("##LoginPage"));
-            popupOpened = true;
 
             if (g_s[0] != '\0' && !isLoggingIn) {
                 isLoggingIn = true;
@@ -210,10 +200,9 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
                 loginThread = std::thread([&]() {
                     err = Login(g_s);
                     if (err == std::string(OBFUSCATE("OK"))) {
-                        isLogin           = bValid;
-                        showLoginSuccess  = true;
-                        loginSuccessTimer = 0.0f;
-                        popupOpened       = false;
+                        isLogin          = bValid;
+                        startTime        = std::chrono::steady_clock::now();
+                        showLoginSuccess = true;
                     }
                     isLoggingIn = false;
                 });
@@ -278,10 +267,10 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
                 loginThread = std::thread([&]() {
                     err = Login(g_s);
                     if (err == std::string(OBFUSCATE("OK"))) {
-                        isLogin           = bValid;
+                        isLogin          = bValid;
                         saveKey();
-                        showLoginSuccess  = true;
-                        loginSuccessTimer = 0.0f;
+                        startTime        = std::chrono::steady_clock::now();
+                        showLoginSuccess = true;
                         ImGui::CloseCurrentPopup();
                     }
                     isLoggingIn = false;
@@ -332,7 +321,6 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
         /////////////////////////////////////////////////////////////////////
         // Main overlay (post-login)                                       //
         /////////////////////////////////////////////////////////////////////
-        popupOpened = false;
         initPublicIP();
         Render(ImGui::GetBackgroundDrawList());
 
@@ -370,8 +358,8 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
             float desiredMenuHeight  = std::clamp(displaySize.y * 0.8f, 400.0f, displaySize.y * 0.9f);
             float maxMenuHeight      = displaySize.y * 0.9f;
 
-            /* Tab bar width: base 1100 px (fixed set of 7 tabs) */
-            ImVec2 menuSize = ImVec2(1100.0f, desiredMenuHeight);
+            /* Tab bar width: ~157 px per tab */
+            ImVec2 menuSize = ImVec2(numButtons * 157.0f, desiredMenuHeight);
             ImVec2 maxMenuSize(displaySize.x * 0.9f, maxMenuHeight);
 
             /* Clamp menu so it doesn't overflow the screen edges */
@@ -446,11 +434,11 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
                     }
 
                     /* Centred title text */
-                    ImVec2 textSize = ImGui::CalcTextSize(OBFUSCATE("Modded by Your Name"));
+                    ImVec2 textSize = ImGui::CalcTextSize(OBFUSCATE(MOD_AUTHOR));
                     ImVec2 textPos(
                         windowPos.x + (windowSize.x - textSize.x) * 0.5f,
                         windowPos.y + 24.0f);
-                    drawList->AddText(textPos, IM_COL32_WHITE, OBFUSCATE("Modded by Your Name"));
+                    drawList->AddText(textPos, IM_COL32_WHITE, OBFUSCATE(MOD_AUTHOR));
 
                     /* Red circular close button */
                     ImGui::SetCursorPos(ImVec2(40, 20));
@@ -701,9 +689,6 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
     ImGui::Render();
     ImGui::EndFrame();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH,  &glWidth);
-    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &glHeight);
 
     /* Clear key-down flags set by the touch handler */
     io.KeysDown[io.KeyMap[ImGuiKey_UpArrow]]    = false;
