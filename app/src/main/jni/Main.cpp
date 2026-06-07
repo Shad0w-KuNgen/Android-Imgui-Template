@@ -353,7 +353,21 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
         /////////////////////////////////////////////////////////////////////
         if (ShowMenu || menuAnimationProgress > 0.0f) {
             ImGui::OpenPopup(OBFUSCATE("##MenuMod"));
-
+			
+            ///////////////////////////////////////////////////////////
+            // Tab bar                                               //
+            ///////////////////////////////////////////////////////////
+            /* Tab definitions - add/remove entries here; numButtons
+               is derived automatically so no manual counter needed. */
+            static const ButtonData buttons[] = {
+                {OBFUSCATE(ICON_FA7_WRENCH      " Option 1"), 1},
+                {OBFUSCATE(ICON_FA7_FISH        " Option 2"), 2},
+                {OBFUSCATE(ICON_FA7_HAMMER      " Option 3"), 3},
+                {OBFUSCATE(ICON_FA7_BUG         " Option 4"), 4},
+                {OBFUSCATE(ICON_FA7_LEAF        " Option 5"), 5},
+                {OBFUSCATE(ICON_FA7_GEARS       " Setting"),  6},
+                {OBFUSCATE(ICON_FA7_CIRCLE_USER " About"),    7},
+            };			
             /* Compute clamped menu size relative to screen */
             ImVec2 displaySize       = io.DisplaySize;
             const float padding      = 20.0f;
@@ -460,21 +474,6 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
                     ImGui::PopStyleVar(2);
                     ImGui::Spacing();
                     ImGui::Separator();
-
-                    ///////////////////////////////////////////////////////////
-                    // Tab bar                                               //
-                    ///////////////////////////////////////////////////////////
-                    /* Tab definitions - add/remove entries here; numButtons
-                       is derived automatically so no manual counter needed. */
-                    static const ButtonData buttons[] = {
-                        {OBFUSCATE(ICON_FA7_WRENCH      " Option 1"), 1},
-                        {OBFUSCATE(ICON_FA7_FISH        " Option 2"), 2},
-                        {OBFUSCATE(ICON_FA7_HAMMER      " Option 3"), 3},
-                        {OBFUSCATE(ICON_FA7_BUG         " Option 4"), 4},
-                        {OBFUSCATE(ICON_FA7_LEAF        " Option 5"), 5},
-                        {OBFUSCATE(ICON_FA7_GEARS       " Setting"),  6},
-                        {OBFUSCATE(ICON_FA7_CIRCLE_USER " About"),    7},
-                    };
     
                     float deltaTime     = io.DeltaTime;
                     float availableWidth = windowSize.x - 40.0f;
