@@ -30,7 +30,9 @@ static bool  showLoginSuccess     = false;
 static float progress             = 1.0f;
 static auto  startTime            = std::chrono::steady_clock::now();
 
-static bool  attemptedAutoLogin   = false; {
+static bool  attemptedAutoLogin   = false; 
+
+void ShowLoginSuccess() {
     ImGui::Begin(OBFUSCATE("Login Success"), nullptr,
         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 
