@@ -3,6 +3,9 @@
 #include <cmath>
 #include <imgui.h>
 
+/* Mod author name shown in the menu header and watermark overlay */
+#define MOD_AUTHOR "Modded by Your Name"
+
 /////////////////////////////////////////////////////////////////////////////
 // Menu animation state                                                    //
 /////////////////////////////////////////////////////////////////////////////
