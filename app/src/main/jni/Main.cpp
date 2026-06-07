@@ -10,7 +10,9 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
+#include <mutex>
 #include <thread>
+#include <atomic>
 
 #include "AnAn/Call_Me.h"
 #include "Headers.h"
@@ -689,6 +691,9 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
     ImGui::Render();
     ImGui::EndFrame();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH,  &glWidth);
+    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &glHeight);
 
     /* Clear key-down flags set by the touch handler */
     io.KeysDown[io.KeyMap[ImGuiKey_UpArrow]]    = false;
