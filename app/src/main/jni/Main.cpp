@@ -361,6 +361,7 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
             float maxMenuHeight      = displaySize.y * 0.9f;
 
             /* Tab bar width: ~157 px per tab */
+            static constexpr int numButtons = (int)(sizeof(buttons) / sizeof(buttons[0]));
             ImVec2 menuSize = ImVec2(numButtons * 157.0f, desiredMenuHeight);
             ImVec2 maxMenuSize(displaySize.x * 0.9f, maxMenuHeight);
 
@@ -474,9 +475,7 @@ EGLBoolean _eglSwapBuffers(EGLDisplay dpy, EGLSurface surface) {
                         {OBFUSCATE(ICON_FA7_GEARS       " Setting"),  6},
                         {OBFUSCATE(ICON_FA7_CIRCLE_USER " About"),    7},
                     };
-                    /* Derived at compile time - no need to keep a separate counter */
-                    static constexpr int numButtons = (int)(sizeof(buttons) / sizeof(buttons[0]));
-
+    
                     float deltaTime     = io.DeltaTime;
                     float availableWidth = windowSize.x - 40.0f;
                     RenderTabBar(buttons, numButtons, easedProgress, deltaTime, availableWidth);
