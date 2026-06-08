@@ -51,30 +51,12 @@ void ShowLoginSuccess() {
 
     float windowWidth = ImGui::GetWindowWidth();
     
-    ImGui::SetCursorPosY(40);
+    ImGui::SetCursorPosY(50);
     float textWidth = ImGui::CalcTextSize(OBFUSCATE("Login successful")).x;
     ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
     ImGui::TextColored(ImVec4(0, 1, 0, 1), OBFUSCATE("Login successful"));
 
-    auto currentTime = std::chrono::steady_clock::now();
-    std::chrono::duration<float> elapsedTime = currentTime - startTime;
-    const float countdownTime = 7.0f;
-    progress = 1.0f - (elapsedTime.count() / countdownTime);
-    
-    if (progress <= 0.0f) {
-        progress = 0.0f;
-        showLoginSuccess = false;
-        ImGui::End();
-        return;
-    }
-
-    ImGui::SetCursorPosY(100);
-    ImGui::SetCursorPosX((windowWidth - 300) * 0.5f);
-    ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(0, 1, 0, 1));
-    ImGui::ProgressBar(progress, ImVec2(300, 10));
-    ImGui::PopStyleColor();
-
-    ImGui::SetCursorPosY(170);
+    ImGui::SetCursorPosY(120);
     ImGui::SetCursorPosX((windowWidth - 100) * 0.5f);
     
     if (ImGui::Button(OBFUSCATE("OK"), ImVec2(100, 45))) {
