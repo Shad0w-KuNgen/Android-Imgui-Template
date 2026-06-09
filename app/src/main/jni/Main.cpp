@@ -837,7 +837,7 @@ void* Init_Thread(void*) {
     const int maxRetries = 10;
 
     while (!il2cppMap.isValid() && retryCount < maxRetries) {
-        il2cppMap = KittyMemory::getLibraryBaseMap(oxorany("libil2cpp.so"));
+        il2cppMap = KittyMemory::getLibraryBaseMap(oxorany(TARGET_LIB));
         if (!il2cppMap.isValid()) {
             usleep(2000 * 1000);
             retryCount++;
